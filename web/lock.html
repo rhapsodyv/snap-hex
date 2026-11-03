@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pyodide Lock Builder</title>
+<style>
+  :root { --bg: #fff; --fg: #222; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #1b1b1b; --fg: #ddd; } }
+  :root[data-theme="dark"] { --bg: #1b1b1b; --fg: #ddd; }
+  body { background: var(--bg); color: var(--fg); font: 13px/1.4 ui-monospace, monospace; margin: 16px; }
+  button { font: inherit; padding: 6px 12px; }
+</style>
+</head>
+<body>
+<p>Rebuilds the configurator's <code>pyodide-lock.json</code>: installs build123d on OCP.wasm (the installer of
+<a href="https://github.com/yeicor/OCP.wasm">yeicor/OCP.wasm</a>), freezes the versions and URLs and keeps only the loaded
+packages. Replace the site's file with the one downloaded here. Use the same Pyodide version as <code>engine.js</code>.</p>
+<p>build123d: <input id="versao" value="0.13.0" size="10"> <button id="ir">Build</button> <button id="baixar" disabled>Download pyodide-lock.json</button></p>
+<pre id="log"></pre>
+<script type="module">
+import { loadPyodide } from 'https://cdn.jsdelivr.net/pyodide/v314.0.7/full/pyodide.mjs';
+const log = (s) => { document.getElementById('log').textContent += s + '\n'; };
+let lock = null;
+document.getElementById('ir').onclick = async () => {
+  document.getElementById('ir').disabled = true;
+  try {
+    const py = await loadPyodide();
+    await py.loadPackage(['micropip', 'numpy']);
+    py.runPython(await (await fetch('https://raw.githubusercontent.com/yeicor/OCP.wasm/master/build123d/bootstrap.py')).text());
+    log('installing…');
+    await py.runPythonAsync(`await bootstrap(${JSON.stringify(document.getElementById('versao').value)})`);
+    lock = await py.runPythonAsync(`
+import json, micropip, pyodide_js
+lock = json.loads(micropip.freeze())
+loaded = {k.lower().replace('_', '-') for k in pyodide_js.loadedPackages.object_keys()}
+lock['packages'] = {k: p for k, p in lock['packages'].items() if k.lower().replace('_', '-') in loaded}
+# build123d requires cadquery-ocp-novtk and lib3mf: here they are the OCP.wasm builds
+swap = {'cadquery-ocp-novtk': 'cadquery-ocp-novtk-ocp-wasm', 'lib3mf': 'lib3mf-ocp-wasm', 'prompt_toolkit': 'prompt-toolkit'}
+for p in lock['packages'].values():
+    p['depends'] = sorted({swap.get(d, d) for d in p.get('depends', [])})
+missing = {d for p in lock['packages'].values() for d in p['depends'] if d not in lock['packages']}
+assert not missing, missing
+json.dumps(lock, indent=1, sort_keys=True)
+`);
+    log(`done: ${Object.keys(JSON.parse(lock).packages).length} packages`);
+    document.getElementById('baixar').disabled = false;
+  } catch (e) { log('ERROR: ' + e); }
+};
+document.getElementById('baixar').onclick = () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([lock], { type: 'application/json' }));
+  a.download = 'pyodide-lock.json';
+  a.click();
+};
+</script>
+</body>
+</html>

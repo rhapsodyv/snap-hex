@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SnapHex Configurator</title>
+<meta name="description" content="SnapHex: a hexagonal grid under the printer and spring-loaded snap-fit mount plugs for the electronics. Configure it and download the STLs, generated in the browser with build123d.">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<header>
+  <h1>SnapHex</h1>
+  <span class="sub">a hex grid under the printer, and snap-fit mount plugs for the electronics, generated here in your browser</span>
+  <a class="repo" href="https://github.com/rhapsodyv/snap-hex">GitHub</a>
+  <span id="engine-state" class="engine-state loading">starting…</span>
+</header>
+<main>
+  <aside id="side">
+    <section class="block">
+      <label>Printer <select id="preset" disabled></select></label>
+      <p id="preset-description" class="note"></p>
+      <div class="buttons">
+        <button id="generate" class="primary" disabled>Generate</button>
+        <button id="download" disabled>Download all STLs</button>
+      </div>
+      <p id="warning" class="warning" hidden></p>
+      <p id="progress" class="progress">Loading…</p>
+    </section>
+    <section class="block" id="parts-block" hidden>
+      <h2>Parts</h2>
+      <table id="parts"><thead><tr><th>Part</th><th class="num">Qty</th><th class="num">cm³</th><th></th></tr></thead><tbody></tbody></table>
+      <p class="note">Print base down, as the files come, with no supports. Print the grid and the mount plugs with the same
+        slicer profile: the snap fit lives in the cells' groove.</p>
+    </section>
+    <section class="block">
+      <h2>Parameters <span id="n-changed" class="counter"></span></h2>
+      <div class="filters">
+        <input id="filter" type="search" placeholder="filter">
+        <label class="check"><input id="changed-only" type="checkbox"> changed only</label>
+        <button id="reset" class="small">reset</button>
+      </div>
+      <div id="parameters"></div>
+    </section>
+  </aside>
+  <section id="view">
+    <div id="canvas"></div>
+    <div id="legend">
+      <span><i class="c-grid"></i>grid</span>
+      <span><i class="c-joiner"></i>splines</span>
+      <label class="check"><input id="show-mounts" type="checkbox" checked><i class="c-mount"></i>mount plugs</label>
+      <label class="check"><input id="show-frame" type="checkbox" checked> frame</label>
+      <label class="check"><input id="show-deck" type="checkbox"> deck</label>
+      <button id="from-below" class="small">from below</button>
+      <button id="from-above" class="small">from above</button>
+    </div>
+    <div id="selection" hidden></div>
+    <p id="footer">Ready-made with the default values; a changed parameter is generated here by the
+      <a href="https://github.com/yeicor/OCP.wasm">OCP.wasm</a> build of OpenCascade (the first load takes a minute or two,
+      and each grid quadrant a few more).</p>
+    <div id="empty">The model shows up here.</div>
+  </section>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>

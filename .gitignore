@@ -1,0 +1,12 @@
+.DS_Store
+__pycache__/
+*.pyc
+.venv*/
+.claude/
+
+# build.py output (STEP, STL, BREP, previews): hundreds of MB, made again in a minute
+out/
+
+# made by web/package.py and web/engine.py pregenerate (the Pages workflow runs both before publishing web/)
+web/generator/
+web/pre/

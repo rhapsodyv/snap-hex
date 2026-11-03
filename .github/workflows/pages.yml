@@ -1,0 +1,39 @@
+# Publishes the configurator (web/) on GitHub Pages. It copies the generator into the site (web/package.py) and builds
+# the ready-made default configuration (web/engine.py pregenerate: view meshes, STLs and the ZIP) with the same
+# build123d version the browser engine runs (pyodide-lock.json), so none of those big files live in git.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install build123d==0.13.0
+      - run: python web/package.py
+      - run: python web/engine.py pregenerate
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - id: deploy
+        uses: actions/deploy-pages@v4
