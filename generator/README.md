@@ -155,6 +155,7 @@ são espelhadas para continuar em camadas inteiras. O `mount_plug` padrão conti
 | `spring_model.py` | modelo de vigas das travas do mount plug: força e deformação de cada variante |
 | `validate_gridv8.py` | sobrepõe nossos cortes aos do Fusion (`reference/gridv8/`) e mede o desvio |
 | `build.py`, `render.py` | exporta para `out/` e gera as prévias |
+| `figures.py` | as figuras do README (`docs/`): o mount plug cortado, com as travas em cor |
 
 ## Diferenças em relação ao gridv8
 

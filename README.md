@@ -19,6 +19,11 @@ Most snap fits either hook in (strong, but they wear out or break when you take 
 SnapHex plug holds firmly, and goes in and out many times without marks or fatigue on the plastic. In the tests it held
 so tightly that a 6-year-old could hardly pull it out, and its ABS showed no stress whitening.
 
+<p align="center"><img src="docs/mount-plug-cutaway.png" width="460"
+  alt="The mount plug cut open at the top of its pockets: six lock bars, each pushed out by a zig-zag spring"></p>
+
+![Cuts through the mount plug: one lock on each face, the zig-zag spring behind the bar, and the bar bearing on its ends](docs/mount-plug-sections.png)
+
 - **The lock is a bar along the whole face**, 1 mm thick, with a smooth, round-nosed bump that fits the groove in the
   cell walls. All six faces of the hexagon have one.
 - **A zig-zag spring pushes each bar out.** Three 0.6 mm segments, one pass of a 0.4 mm nozzle each, are joined at
@@ -35,7 +40,7 @@ so tightly that a 6-year-old could hardly pull it out, and its ABS showed no str
 By a beam model, one plug takes about 2 to 4 kg of straight pull to come out. For a weight that hangs on it all the time,
 count on a fraction of that, and use two or more plugs per part. The grid is printed in ABS, like the plugs.
 
-`generator/spring_model.py` is the beam model used to tune it: spring force and strain for each variant, and the pull
+The pictures come from `generator/figures.py`. `generator/spring_model.py` is the beam model used to tune it: spring force and strain for each variant, and the pull
 along the way out. The design notes, in Portuguese, are in [`generator/README.md`](generator/README.md), with every
 variant that was printed and tested.
 

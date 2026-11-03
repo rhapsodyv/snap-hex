@@ -47,7 +47,7 @@ def layout_map(path, quadrants):
     plt.close(fig)
 
 
-def png(path, items, elev, azim, title="", zoom=1.0, size=(10, 8)):
+def png(path, items, elev, azim, title="", zoom=1.0, size=(10, 8), dpi=130, transparent=False):
     """items: [(shape, color)]. All triangles go in one collection so depth sorting is global."""
     e, a = radians(elev), radians(azim)
     eye = np.array([cos(e) * cos(a), cos(e) * sin(a), sin(e)])
@@ -66,7 +66,8 @@ def png(path, items, elev, azim, title="", zoom=1.0, size=(10, 8)):
 
     fig = plt.figure(figsize=size)
     ax = fig.add_subplot(projection="3d")
-    ax.add_collection3d(Poly3DCollection(polys, facecolors=colors, edgecolors="none", linewidths=0))
+    # edges in the faces' own colors hide the hairline seams between triangles
+    ax.add_collection3d(Poly3DCollection(polys, facecolors=colors, edgecolors=colors, linewidths=0.25))
     pts = polys.reshape(-1, 3)
     lo, hi = pts.min(axis=0), pts.max(axis=0)
     mid, half = (lo + hi) / 2, (hi - lo).max() / 2 * zoom
@@ -79,5 +80,5 @@ def png(path, items, elev, azim, title="", zoom=1.0, size=(10, 8)):
     ax.set_axis_off()
     ax.set_title(title)
     fig.tight_layout()
-    fig.savefig(path, dpi=130)
+    fig.savefig(path, dpi=dpi, transparent=transparent)
     plt.close(fig)
